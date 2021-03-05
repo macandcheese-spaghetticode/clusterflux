@@ -1,0 +1,270 @@
+
+
+
+
+
+
+
+
+--Boiler plate code to manipulate the HTML to let us pull the market price of the stock.--
+--3 sets of modifiers for the 3 stocks--
+#########################################################
+to extractTextBitcoin(searchTextBitcoin, startTextBitcoin, endTextBitcoin)
+	set tid to AppleScript's text item delimiters
+	set startTextBitcoin to ">"
+	set searchTextBitcoin to {"priceValue___11gHJ", 0 & searchTextBitcoin}
+	set AppleScript's text item delimiters to startTextBitcoin
+	set endItemsBitcoin to text item -1 of searchTextBitcoin
+	set AppleScript's text item delimiters to endTextBitcoin
+	set beginningToEndBitcoin to text item 1 of endItemsBitcoin
+	set AppleScript's text item delimiters to startTextBitcoin
+	set endTextBitcoin to (text items 2 thru -1 of beginningToEndBitcoin) as record
+	set AppleScript's text item delimiters to tid
+end extractTextBitcoin
+
+to extractTextLitecoin(searchTextLitecoin, startTextLitecoin, endTextLitecoin)
+	set tid to AppleScript's text item delimiters
+	set startTextLitecoin to ">"
+	set searchTextLitecoin to {"priceValue___11gHJ", 0 & searchTextLitecoin}
+	set AppleScript's text item delimiters to startTextLitecoin
+	set endItemsLitecoin to text item -1 of searchTextLitecoin
+	set AppleScript's text item delimiters to endTextLitecoin
+	set beginningToEndLitecoin to text item 1 of endItemsLitecoin
+	set AppleScript's text item delimiters to startTextLitecoin
+	set endTextLitecoin to (text items 2 thru -1 of beginningToEndLitecoin) as record
+	set AppleScript's text item delimiters to tid
+end extractTextLitecoin
+
+to extractTextDogecoin(searchTextDogecoin, startTextDogecoin, endTextDogecoin)
+	set tid to AppleScript's text item delimiters
+	set startTextDogecoin to ">"
+	set searchTextDogecoin to {"priceValue___11gHJ", 0 & searchTextDogecoin}
+	set AppleScript's text item delimiters to startTextDogecoin
+	set endItemsDogecoin to text item -2 of searchTextDogecoin
+	set AppleScript's text item delimiters to endTextDogecoin
+	set beginningToEndDogecoin to text item 1 of endItemsDogecoin
+	set AppleScript's text item delimiters to startTextDogecoin
+	set endTextDogecoin to (text items 2 thru -1 of beginningToEndDogecoin) as record
+	set AppleScript's text item delimiters to tid
+end extractTextDogecoin
+#########################################################
+--A tell statement to open the webpage where the stocks are measured--
+tell application "Safari"
+	activate
+	do shell script "open https://coinmarketcap.com/currencies/bitcoin/"
+end tell
+
+delay 2
+
+--A function that differentiates the data on the web page by class and number. It
+--also uses JavaScript to write the data to a useable format.
+to getInputByClassBitcoin(theClass, num)
+	tell application "Safari"
+		set BitcoinInput to do JavaScript "
+		document.getElementsByClassName('" & theClass & "')[" & num & "].innerHTML;" in document 1
+	end tell
+	return BitcoinInput
+end getInputByClassBitcoin
+
+--The function with the class and number criteria manually pulled from the web page--
+getInputByClassBitcoin("priceValue___11gHJ", 0)
+
+--Setting the instataneous stock price to a variable to input in Excel--
+set BitcoinPrice to getInputByClassBitcoin("priceValue___11gHJ", 0)
+on BitcoinFunction(BitcoinPrice)
+	set BitcoinFunction to extractTextBitcoin(BitcoinPrice, "<div class=>", "</div>")
+	return BitcoinFunction(BitcoinPrice)
+end BitcoinFunction
+#########################################################
+tell application "Safari"
+	activate
+	do shell script "open https://coinmarketcap.com/currencies/litecoin/"
+end tell
+
+delay 2
+
+to getInputByClassLitecoin(theClass, num)
+	tell application "Safari"
+		set LitecoinInput to do JavaScript "
+		document.getElementsByClassName('" & theClass & "')[" & num & "].innerHTML;" in document 1
+	end tell
+	return LitecoinInput
+end getInputByClassLitecoin
+
+getInputByClassLitecoin("priceValue___11gHJ", 0)
+
+set LitecoinPrice to getInputByClassLitecoin("priceValue___11gHJ", 0)
+on LitecoinFuction(LitecoinPrice)
+	set LitecoinFuction to extractTextLitecoin(LitecoinPrice, "<div class=>", "</div>")
+	return LitecoinFuction(LitecoinPrice)
+end LitecoinFuction
+#########################################################
+tell application "Safari"
+	activate
+	do shell script "open https://coinmarketcap.com/currencies/dogecoin/"
+end tell
+
+delay 2
+
+to getInputByClassDogecoin(theClass, num)
+	tell application "Safari"
+		set DogecoinInput to do JavaScript "
+		document.getElementsByClassName('" & theClass & "')[" & num & "].innerHTML;" in document 1
+	end tell
+	return DogecoinInput
+end getInputByClassDogecoin
+
+getInputByClassDogecoin("priceValue___11gHJ", 0)
+
+set DogecoinPrice to getInputByClassDogecoin("priceValue___11gHJ", 0)
+on DogecoinFuction(DogecoinPrice)
+	set DogecoinFuction to extractTextDogecoin(DogecoinPrice, "<div class=>", "</div>")
+	return DogecoinFuction(DogecoinPrice)
+end DogecoinFuction
+(*
+#########################################################
+tell application "Safari"
+	activate
+	do shell script "open https://coinmarketcap.com/currencies/Ethereum/"
+end tell
+
+delay 2
+
+to getInputByClassEthereum(theClass, num)
+	tell application "Safari"
+		set EthereumInput to do JavaScript "
+		document.getElementsByClassName('" & theClass & "')[" & num & "].innerHTML;" in document 1
+	end tell
+	return EthereumInput
+end getInputByClassEthereum
+
+getInputByClassEthereum("priceValue___11gHJ", 0)
+
+set EthereumPrice to getInputByClassEthereum("priceValue___11gHJ", 0)
+on EthereumFunction(EthereumPrice)
+	set EthereumFunction to extractTextEthereum(EthereumPrice, "<div class=>", "</div>")
+	return EthereumFunction(EthereumPrice)
+end EthereumFunction
+#########################################################
+tell application "Safari"
+	activate
+	do shell script "open https://coinmarketcap.com/currencies/Binance_coin/"
+end tell
+
+delay 2
+
+to getInputByClassBinance_coin(theClass, num)
+	tell application "Safari"
+		set Binance_coinInput to do JavaScript "
+		document.getElementsByClassName('" & theClass & "')[" & num & "].innerHTML;" in document 1
+	end tell
+	return Binance_coinInput
+end getInputByClassBinance_coin
+
+getInputByClassBinance_coin("priceValue___11gHJ", 0)
+
+set Binance_coinPrice to getInputByClassBinance_coin("priceValue___11gHJ", 0)
+on Binance_coinFunction(Binance_coinPrice)
+	set Binance_coinFunction to extractTextBinance_coin(Binance - coinPrice, "<div class=>", "</div>")
+	return Binance_coinFunction(Binance_coinPrice)
+end Binance_coinFunction
+#########################################################
+tell application "Safari"
+	activate
+	do shell script "open https://coinmarketcap.com/currencies/Tether/"
+end tell
+
+delay 2
+
+to getInputByClassTether(theClass, num)
+	tell application "Safari"
+		set TetherInput to do JavaScript "
+		document.getElementsByClassName('" & theClass & "')[" & num & "].innerHTML;" in document 1
+	end tell
+	return TetherInput
+end getInputByClassTether
+
+getInputByClassTether("priceValue___11gHJ", 0)
+
+set TetherPrice to getInputByClassTether("priceValue___11gHJ", 0)
+on TetherFunction(TetherPrice)
+	set TetherFunction to extractTextTether(TetherPrice, "<div class=>", "</div>")
+	return TetherFunction(TetherPrice)
+end TetherFunction
+#########################################################
+tell application "Safari"
+	activate
+	do shell script "open https://coinmarketcap.com/currencies/Polkadot/"
+end tell
+
+delay 2
+
+to getInputByClassPolkadot(theClass, num)
+	tell application "Safari"
+		set PolkadotInput to do JavaScript "
+		document.getElementsByClassName('" & theClass & "')[" & num & "].innerHTML;" in document 1
+	end tell
+	return PolkadotInput
+end getInputByClassPolkadot
+
+getInputByClassPolkadot("priceValue___11gHJ", 0)
+
+set PolkadotPrice to getInputByClassPolkadot("priceValue___11gHJ", 0)
+on PolkadotFunction(PolkadotPrice)
+	set PolkadotFunction to extractTextPolkadot(PolkadotPrice, "<div class=>", "</div>")
+	return PolkadotFunction(PolkadotPrice)
+end PolkadotFunction
+#########################################################
+*)
+--Opens the compiled Excel workbook, negates user input, finds the next available--
+--cell to input data, and fills the fields with Year, Month, Day, Time, and Price--
+set {year:y, month:m, day:d} to (current date)
+tell application "Microsoft Excel"
+	open "/Users/clusterflux/Desktop/人CRYPTO人_excel.xlsx"
+	set display alerts to false
+	activate object sheet "ㅇㅅㅇBITCOINㅇㅅㅇ"
+	first row index of (get end (last cell of column 9) direction toward the top)
+	set LastRowBitcoin to first row index of (get end (last cell of column 9) direction toward the top)
+	--write date and time for each market reading to excel file
+	set value of cell ("I" & LastRowBitcoin + 1) to y
+	set value of cell ("J" & LastRowBitcoin + 1) to m
+	set value of cell ("K" & LastRowBitcoin + 1) to d
+	set value of cell ("L" & LastRowBitcoin + 1) to (time string of (current date))
+	set value of cell ("M" & LastRowBitcoin + 1) to BitcoinPrice
+	activate object sheet "ㅇㅅㅇLITECOINㅇㅅㅇ"
+	first row index of (get end (last cell of column 9) direction toward the top)
+	set LastRowLitecoin to first row index of (get end (last cell of column 9) direction toward the top)
+	set value of cell ("I" & LastRowLitecoin + 1) to y
+	set value of cell ("J" & LastRowLitecoin + 1) to m
+	set value of cell ("K" & LastRowLitecoin + 1) to d
+	set value of cell ("L" & LastRowLitecoin + 1) to (time string of (current date))
+	set value of cell ("M" & LastRowLitecoin + 1) to LitecoinPrice
+	activate object sheet "ㅇㅅㅇDOGECOINㅇㅅㅇ"
+	first row index of (get end (last cell of column 9) direction toward the top)
+	set LastRowDogecoin to first row index of (get end (last cell of column 9) direction toward the top)
+	set value of cell ("I" & LastRowDogecoin + 1) to y
+	set value of cell ("J" & LastRowDogecoin + 1) to (time string of (current date))
+	set value of cell ("K" & LastRowDogecoin + 1) to d
+	set value of cell ("L" & LastRowDogecoin + 1) to (time string of (current date))
+	set value of cell ("M" & LastRowDogecoin + 1) to DogecoinPrice
+	set workbookName to ("人CRYPTO人_excel.xlsx") as string
+	set destinationPath to (path to desktop as text) & workbookName
+	save active workbook in destinationPath
+	delay 2
+	close every workbook saving no
+	tell application "Microsoft Excel"
+	quit
+end tell
+
+set closeURLs to {"https://coinmarketcap.com/currencies/bitcoin/", "https://coinmarketcap.com/currencies/litecoin/", "https://coinmarketcap.com/currencies/dogecoin/"}
+
+repeat with theURL in closeURLs
+	tell application "Safari" to close (every tab of every window whose URL contains (contents of theURL))
+end repeat
+
+
+
+
+
+
+
